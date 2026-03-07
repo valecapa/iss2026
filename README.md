@@ -10,8 +10,10 @@
  [Riferimento: conway26Java Dai requisiti al deployment](https://anatali.github.io/issLab2026/Project%20conway26Java.html#conway26java-dai-requisiti-al-deployment)
  * [ConwayLife Sprint1](ConwayLife/Sprint1/conway26Java): impostazione di un primo prototipo
    in Java con dispositivi Mock di I/O. <i>Distribuzione</i>: file jar.
+   [Code](ConwayLife/Sprint1/conway26Java)
  * [ConwayLife Sprint2](ConwayLife/Sprint2/conway26Java): <b>evoluzione</b> del primo prototipo
-   con un dispositivo di output realizzato in Swing. <i>Distribuzione</i>: file jar
+   con un dispositivo di output realizzato in Swing. <i>Distribuzione</i>: file jar.
+   [Codice](ConwayLife/Sprint2/conway26JavaSwing)
  ### Sistemi come servizi
  * ...
  ### Sistema ConwayLife con pagine HTML
