@@ -1,0 +1,7 @@
+!Name: Blinker
+!Un semplice oscillatore di periodo 2
+...
+.O.
+.O.
+.O.
+...

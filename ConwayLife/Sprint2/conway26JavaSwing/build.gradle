@@ -1,0 +1,80 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'jacoco'
+    id 'eclipse'
+}
+
+version '1.0'
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+repositories {
+    mavenCentral()
+    flatDir {   dirs './libs'    }
+    flatDir {   dirs '../../../unibolibs'    }
+}
+
+dependencies {
+    /* JSON ********************************************************************************* */
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation group: 'org.json', name: 'json', version: '20180130'
+
+    /* UNIBO ******************************* */
+    implementation name: 'uniboInterfaces'
+    implementation name: '2p301'
+    implementation name: 'unibo.basicomm23-1.0'
+    
+    /* conway ******************************* */
+    implementation name: 'conway26Java-1.0'
+}
+
+sourceSets {
+    main.java.srcDirs += 'src'
+    main.java.srcDirs += 'src/main/java'
+    main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += 'src/main/resources'
+    test.java.srcDirs += 'src/main/java/test'         //test is specific
+    test.java.srcDirs += 'src/main/kotlin/test'
+}
+
+eclipse {
+    classpath {
+        sourceSets -= [sourceSets.main, sourceSets.test]
+    }
+}
+
+application {
+    //Define the main class for the application.
+    mainClassName    = 'main.java.conway.MainConwayLifeJava'
+}
+
+jar {
+    println("building jar")
+    from sourceSets.main.allSource
+    from('./') {
+      include '*.pl'
+      include '*.json'
+    }
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+}
+ 
+task dovesiamo {
+    println("projectDir= $projectDir")
+    println("buildDir  = $buildDir")
+}
+ 
+jacocoTestReport {
+    dependsOn test // Il report viene generato solo dopo l'esecuzione dei test
+
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco')
+    }
+}

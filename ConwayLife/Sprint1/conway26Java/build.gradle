@@ -1,0 +1,123 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'jacoco'
+    id 'eclipse'
+}
+
+version '1.0'
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+repositories {
+    mavenCentral()
+    flatDir {   dirs '../../../unibolibs'    }
+}
+
+dependencies {
+    /* JSON ********************************************************************************* */
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation group: 'org.json', name: 'json', version: '20180130'
+
+    /* UNIBO ******************************* */
+    implementation name: 'uniboInterfaces'
+    implementation name: '2p301'
+    implementation name: 'unibo.basicomm23-1.0'
+
+}
+
+sourceSets {
+    main.java.srcDirs += 'src'
+    main.java.srcDirs += 'src/main/java'
+    main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += 'src/main/resources'
+    test.java.srcDirs += 'src/main/java/test'         //test is specific
+    test.java.srcDirs += 'src/main/kotlin/test'
+}
+
+eclipse {
+    classpath {
+        sourceSets -= [sourceSets.main, sourceSets.test]
+    }
+}
+
+application {
+    //Define the main class for the application.
+    mainClassName    = 'main.java.conway.MainConwayLifeJava'
+}
+
+jar {
+    println("building jar")
+    from sourceSets.main.allSource
+    /* in futuro ...
+    from('./') {
+      include '*.pl'
+      include '*.json'
+    }
+    */
+    manifest {
+        attributes 'Main-Class': "$mainClassName"
+    }
+}
+ 
+/* 
+------------------------------------------
+jar con dipendenze per renderlo eseuibile
+------------------------------------------
+*/  
+//Definiamo il percorso della librerie esterna
+def uniboLibsPath = "../../../unibolibs"
+
+task jarfat(type: Jar) {
+	archiveBaseName = 'conway26JavaFat'
+    archiveVersion = '1.0'
+    
+    manifest {
+        attributes(
+            'Main-Class': 'main.java.conway.MainConwayLifeJava',
+            // Costruiamo il Class-Path del manifest usando solo i nomi dei file
+            'Class-Path': configurations.runtimeClasspath.files.collect { "lib/${it.name}" }.join(' ')
+        )
+    }
+    
+    //Includi tutte le classi del  progetto
+    from sourceSets.main.output
+    
+    //Gestisci i file duplicati (evita errori di build)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+//jar xf conway26Java-1.0.jar META-INF/MANIFEST.MF per vedere MANIFEST.MF
+
+// Task per copiare le dipendenze nella cartella build/libs/lib
+task copyDeps(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Prende i file definiti nelle dipendenze del progetto
+    from configurations.runtimeClasspath
+    // Se hai JAR sparsi nella cartella unibolibs che non sono nel classpath, 
+    // puoi aggiungerli esplicitamente così:
+    from fileTree(uniboLibsPath) { include '*.jar' }
+    
+    into "$buildDir/libs/lib"
+}
+
+// Colleghiamo la copia al processo di build
+build.dependsOn copyDeps
+jarfat.dependsOn copyDeps
+
+task dovesiamo {
+    println("projectDir= $projectDir")
+    println("buildDir  = $buildDir")
+}
+ 
+jacocoTestReport {
+    dependsOn test // Il report viene generato solo dopo l'esecuzione dei test
+
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco')
+    }
+}
