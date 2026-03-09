@@ -13,7 +13,7 @@
    [Code](ConwayLife/Sprint1/conway26Java)
  * [ConwayLife Sprint2](ConwayLife/Sprint2/conway26Java): <b>evoluzione</b> del primo prototipo
    con un dispositivo di output realizzato in Swing. <i>Distribuzione</i>: file jar.
-   [Codice](ConwayLife/Sprint2/conway26JavaSwing)
+   [Code](ConwayLife/Sprint2/conway26JavaSwing)
  ### Sistemi come servizi
  * ...
  ### Sistema ConwayLife con pagine HTML
