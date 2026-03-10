@@ -373,6 +373,104 @@ private Grid grid;
 <pre>
 E' un'entità composta da una IGrid
 
+public interface LifeInterface {
+	
+    void nextGeneration();	//Calcola l'evoluzione dello stato alla generazione successiva 
+    boolean isAlive(int row, int col);	//Restituisce lo stato di una cella specifica    
+    void setCell(int row, int col, boolean alive);	//Imposta lo stato di una cella
+	ICell getCell(int x, int y);	//Restituisce la cell
+	Grid getGrid();	//Restituisce la grid
+	void resetGrids();	//pulisce
+
+
+    /** Restituisce il numero di righe e colonne */
+//    int getRows();
+//    int getCols();
+    
+    /** Restituisce una rappresentazione grafica testuale della grglia*/
+    //public String gridRep( );
+}
+
+public class LifeTest {
+private LifeInterface lifeModel;
+
+	@Before
+	public void setup() {
+		System.out.println("LifeTest | setup");	
+		lifeModel = new Life(5, 5);
+	}
+	@After
+	public void down() {
+		System.out.println("LifeTest | down");
+	}
+	
+	@Test
+	public void testSetCellAlive() {
+		System.out.println("LifeTest | setting cell alive");	
+	    lifeModel.setCell(3, 3, true);
+	    assertTrue(lifeModel.isAlive(3, 3));
+	}
+	
+	@Test
+	public void testSetCellDead() {
+		System.out.println("LifeTest | setting cell dead");
+	    lifeModel.setCell(1, 2, false);
+	    assertFalse(lifeModel.isAlive(1, 2));
+	}
+	
+	@Test
+	public void testLonelyCellDies() {
+		System.out.println("LifeTest | test lonely cell");
+	    lifeModel.setCell(4, 1, true);
+	    lifeModel.nextGeneration();
+	    assertFalse(lifeModel.isAlive(4, 1));
+	}
+	
+	@Test
+	public void testBlockStillLife() {
+		System.out.println("LifeTest | test block 2x2");
+		lifeModel.setCell(1,1,true);
+		lifeModel.setCell(1,2,true);
+		lifeModel.setCell(2,1,true);
+		lifeModel.setCell(2,2,true);
+
+		lifeModel.nextGeneration();
+
+	    assertTrue(lifeModel.isAlive(1,1));
+	    assertTrue(lifeModel.isAlive(1,2));
+	    assertTrue(lifeModel.isAlive(2,1));
+	    assertTrue(lifeModel.isAlive(2,2));
+	}
+	
+	@Test
+	public void testReset() {
+		
+		System.out.println("LifeTest | reset");
+		
+		for(int i = 0; i < 5; i++) {
+			for(int j = 0; j < 5; j++) {
+				lifeModel.setCell(i, j, true);
+			}
+		}
+
+		lifeModel.resetGrids();
+		
+		for(int i = 0; i < 5; i++) {
+			for(int j = 0; j < 5; j++) {
+				assertFalse(lifeModel.isAlive(i,j));
+			}
+		}
+	}
+	
+	@Test
+	public void testGetGrid() {
+		System.out.println("LifeTest | get grid");
+	    Grid grid = lifeModel.getGrid();
+	    assertNotNull(grid);
+	}
+
+}
+
 </pre>
  
 
